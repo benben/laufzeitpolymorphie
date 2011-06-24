@@ -81,21 +81,21 @@ void Constant::process()
   cout << "output pin: " << output[0] << endl;
 }
 
-template <class fromT, class fromPinT, class toT, class toPinT>
+template <class fromT, class toT>
 class Connection : public Object
 {
   public:
-    Connection(fromT * & _from, fromPinT _fromPin, toT * & _to, toPinT _toPin);
+    Connection(fromT * & _from, int _fromPin, toT * & _to, int _toPin);
     ~Connection();
-    fromPinT fromPin;
-    toPinT toPin;
+    int fromPin;
+    int toPin;
     fromT * from;
     toT * to;
     void process();
 };
 
-template <class fromT, class fromPinT, class toT, class toPinT>
-Connection<fromT, fromPinT, toT, toPinT>::Connection(fromT * & _from, fromPinT _fromPin, toT * & _to, toPinT _toPin)
+template <class fromT, class toT>
+Connection<fromT, toT>::Connection(fromT * & _from, int _fromPin, toT * & _to, int _toPin)
 {
   from = _from;
   to = _to;
@@ -103,13 +103,13 @@ Connection<fromT, fromPinT, toT, toPinT>::Connection(fromT * & _from, fromPinT _
   toPin = _toPin;
 }
 
-template <class fromT, class fromPinT, class toT, class toPinT>
-Connection<fromT, fromPinT, toT, toPinT>::~Connection()
+template <class fromT, class toT>
+Connection<fromT, toT>::~Connection()
 {
 }
 
-template <class fromT, class fromPinT, class toT, class toPinT>
-void Connection<fromT, fromPinT, toT, toPinT>::process()
+template <class fromT, class toT>
+void Connection<fromT, toT>::process()
 {
   cout << "process from Connection()\n";
   cout << from->output[fromPin] << endl;
@@ -124,8 +124,8 @@ int main()
   Constant * const2 = new Constant(3);
   Multiply * mult = new Multiply();
 
-  Connection<Constant, int, Multiply, int> * const1_to_mult = new Connection<Constant, int, Multiply, int>(const1, 0, mult, 0);
-  Connection<Constant, int, Multiply, int> * const2_to_mult = new Connection<Constant, int, Multiply, int>(const2, 0, mult, 1);
+  Connection<Constant, Multiply> * const1_to_mult = new Connection<Constant, Multiply>(const1, 0, mult, 0);
+  Connection<Constant, Multiply> * const2_to_mult = new Connection<Constant, Multiply>(const2, 0, mult, 1);
 
   vector <Object*> objects;
   objects.push_back(const1);
