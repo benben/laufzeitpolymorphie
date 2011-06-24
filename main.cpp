@@ -125,9 +125,7 @@ template <class fromT, class toT>
 void Connection<fromT, toT>::process()
 {
   cout << "process from Connection()\n";
-  cout << from->output[fromPin] << endl;
   to->input[toPin] = from->output[fromPin];
-  cout << to->input[toPin] << endl;
 }
 
 /******************/
