@@ -3,6 +3,10 @@
 
 using namespace std;
 
+
+/******************/
+/* Base Class     */
+/******************/
 class Object
 {
 	public:
@@ -29,6 +33,9 @@ void Object::process()
   cout << "process from Object()\n";
 }
 
+/******************/
+/* Multiply Class */
+/******************/
 class Multiply : public Object
 {
   public:
@@ -56,6 +63,9 @@ void Multiply::process()
   cout << "output pin: " << output[0] << endl;
 }
 
+/******************/
+/* Constant Class */
+/******************/
 class Constant : public Object
 {
   public:
@@ -81,6 +91,9 @@ void Constant::process()
   cout << "output pin: " << output[0] << endl;
 }
 
+/********************/
+/* Connection Class */
+/********************/
 template <class fromT, class toT>
 class Connection : public Object
 {
@@ -117,16 +130,21 @@ void Connection<fromT, toT>::process()
   cout << to->input[toPin] << endl;
 }
 
+/******************/
+/* Main           */
+/******************/
 int main()
 {
-  cout << "hallo welt\n";
+  //Create Objects
   Constant * const1 = new Constant(5);
   Constant * const2 = new Constant(3);
   Multiply * mult = new Multiply();
 
+  //Create Connections between Objects
   Connection<Constant, Multiply> * const1_to_mult = new Connection<Constant, Multiply>(const1, 0, mult, 0);
   Connection<Constant, Multiply> * const2_to_mult = new Connection<Constant, Multiply>(const2, 0, mult, 1);
-
+  
+  //Save all Objects in a vector
   vector <Object*> objects;
   objects.push_back(const1);
   objects.push_back(const2);
@@ -134,6 +152,7 @@ int main()
   objects.push_back(const2_to_mult);
   objects.push_back(mult);
 
+  //Run the process() method of all Objects
   for(unsigned int i = 0; i < objects.size(); i++)
   {
     objects[i]->process();
