@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <typeinfo>
 
 using namespace std;
 
@@ -72,12 +73,11 @@ class Constant : public Object
     Constant(int _var);
     ~Constant();
     void process();
-    int var;
 };
 
 Constant::Constant(int _var)
 {
-  var = _var;
+  output.push_back(_var);
 }
 
 Constant::~Constant()
@@ -86,7 +86,6 @@ Constant::~Constant()
 
 void Constant::process()
 {
-  output.push_back(var);
   cout << "process from Constant()\n";
   cout << "output pin: " << output[0] << endl;
 }
@@ -94,38 +93,34 @@ void Constant::process()
 /********************/
 /* Connection Class */
 /********************/
-template <class fromT, class toT>
+template <class T>
 class Connection : public Object
 {
   public:
-    Connection(fromT * & _from, int _fromPin, toT * & _to, int _toPin);
+    Connection(T * _in, T * _out);
     ~Connection();
-    int fromPin;
-    int toPin;
-    fromT * from;
-    toT * to;
+    T * in;
+    T * out;
     void process();
 };
 
-template <class fromT, class toT>
-Connection<fromT, toT>::Connection(fromT * & _from, int _fromPin, toT * & _to, int _toPin)
+template <class T>
+Connection<T>::Connection(T * _in, T * _out)
 {
-  from = _from;
-  to = _to;
-  fromPin = _fromPin;
-  toPin = _toPin;
+  in = _in;
+  out = _out;
 }
 
-template <class fromT, class toT>
-Connection<fromT, toT>::~Connection()
+template <class T>
+Connection<T>::~Connection()
 {
 }
 
-template <class fromT, class toT>
-void Connection<fromT, toT>::process()
+template <class T>
+void Connection<T>::process()
 {
   cout << "process from Connection()\n";
-  to->input[toPin] = from->output[fromPin];
+  *out = *in;
 }
 
 /******************/
@@ -137,10 +132,10 @@ int main()
   Constant * const1 = new Constant(5);
   Constant * const2 = new Constant(3);
   Multiply * mult = new Multiply();
-
+  
   //Create Connections between Objects
-  Connection<Constant, Multiply> * const1_to_mult = new Connection<Constant, Multiply>(const1, 0, mult, 0);
-  Connection<Constant, Multiply> * const2_to_mult = new Connection<Constant, Multiply>(const2, 0, mult, 1);
+  Connection<int> * const1_to_mult = new Connection<int>(&const1->output[0], &mult->input[0]);
+  Connection<int> * const2_to_mult = new Connection<int>(&const2->output[0], &mult->input[1]);
   
   //Save all Objects in a vector
   vector <Object*> objects;
