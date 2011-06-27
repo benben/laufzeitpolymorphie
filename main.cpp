@@ -1,6 +1,5 @@
 #include <iostream>
 #include <vector>
-#include <typeinfo>
 
 using namespace std;
 
@@ -10,15 +9,16 @@ using namespace std;
 /******************/
 class Object
 {
-	public:
+  public:
     Object(const Object&); //Kopieren verhindern
-	  Object& operator=(const Object&);
+    Object& operator=(const Object&);
 
     Object();
     virtual ~Object();
-	  vector<int> input;
-	  vector<int> output;
-	  virtual void process();
+    //vector<void*> ?????? / http://www.boost.org/doc/libs/1_46_1/doc/html/any/s02.html
+    vector<int> input;
+    vector<int> output;
+    virtual void process();
 };
 
 Object::Object()
