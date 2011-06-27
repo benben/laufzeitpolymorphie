@@ -1,9 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <string.h>
+#include "boost/variant.hpp"
+
+typedef boost::variant<float, int> Type;
 
 using namespace std;
-
 
 /******************/
 /* Base Class     */
@@ -16,9 +18,8 @@ class Object
 
     Object();
     virtual ~Object();
-    //vector<void*> ?????? / http://www.boost.org/doc/libs/1_46_1/doc/html/any/s02.html
-    vector<float> input;
-    vector<float> output;
+    vector<Type> input;
+    vector<Type> output;
     virtual void process();
 };
 
@@ -60,8 +61,7 @@ Multiply::~Multiply()
 void Multiply::process()
 {
   cout << "process from Multiply()\n";
-  
-  output[0] = input[0] * input[1];
+  output[0] = boost::get<float>(input[0]) * boost::get<float>(input[1]);
   cout << "output pin: " << output[0] << endl;
 }
 
