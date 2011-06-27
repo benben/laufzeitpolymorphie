@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <string.h>
 
 using namespace std;
 
@@ -16,8 +17,8 @@ class Object
     Object();
     virtual ~Object();
     //vector<void*> ?????? / http://www.boost.org/doc/libs/1_46_1/doc/html/any/s02.html
-    vector<int> input;
-    vector<int> output;
+    vector<float> input;
+    vector<float> output;
     virtual void process();
 };
 
@@ -70,12 +71,12 @@ void Multiply::process()
 class Constant : public Object
 {
   public:
-    Constant(int _var);
+    Constant(float _var);
     ~Constant();
     void process();
 };
 
-Constant::Constant(int _var)
+Constant::Constant(float _var)
 {
   output.push_back(_var);
 }
@@ -93,34 +94,32 @@ void Constant::process()
 /********************/
 /* Connection Class */
 /********************/
-template <class T>
 class Connection : public Object
 {
   public:
-    Connection(T * _in, T * _out);
+    Connection(void * _in, void * _out, unsigned long _size);
     ~Connection();
-    T * in;
-    T * out;
+    void * in;
+    void * out;
+    unsigned long size;
     void process();
 };
 
-template <class T>
-Connection<T>::Connection(T * _in, T * _out)
+Connection::Connection(void * _in, void * _out, unsigned long _size)
 {
   in = _in;
   out = _out;
+  size = _size;
 }
 
-template <class T>
-Connection<T>::~Connection()
+Connection::~Connection()
 {
 }
 
-template <class T>
-void Connection<T>::process()
+void Connection::process()
 {
   cout << "process from Connection()\n";
-  *out = *in;
+  memcpy(out, in, size);
 }
 
 /******************/
@@ -129,13 +128,13 @@ void Connection<T>::process()
 int main()
 {
   //Create Objects
-  Constant * const1 = new Constant(5);
-  Constant * const2 = new Constant(3);
+  Constant * const1 = new Constant(5.5);
+  Constant * const2 = new Constant(3.2);
   Multiply * mult = new Multiply();
   
-  //Create Connections between Objects
-  Connection<int> * const1_to_mult = new Connection<int>(&const1->output[0], &mult->input[0]);
-  Connection<int> * const2_to_mult = new Connection<int>(&const2->output[0], &mult->input[1]);
+  //Create Connections between Objectshast
+  Connection * const1_to_mult = new Connection(&const1->output[0], &mult->input[0], sizeof(const1->output[0]));
+  Connection * const2_to_mult = new Connection(&const2->output[0], &mult->input[1], sizeof(const2->output[0]));
   
   //Save all Objects in a vector
   vector <Object*> objects;
