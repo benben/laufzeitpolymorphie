@@ -132,11 +132,12 @@ int main()
   Constant * const2 = new Constant(3.2);
   Multiply * mult = new Multiply();
   
-  //Create Connections between Objectshast
+  //Create Connections between Objects
   Connection * const1_to_mult = new Connection(&const1->output[0], &mult->input[0], sizeof(const1->output[0]));
   Connection * const2_to_mult = new Connection(&const2->output[0], &mult->input[1], sizeof(const2->output[0]));
   
   //Save all Objects in a vector
+  // http://www.boost.org/doc/libs/1_46_1/libs/ptr_container/doc/tutorial.html
   vector <Object*> objects;
   objects.push_back(const1);
   objects.push_back(const2);
